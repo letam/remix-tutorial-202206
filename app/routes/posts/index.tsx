@@ -1,8 +1,17 @@
 import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 
+type Post = {
+  slug: string;
+  title: string;
+};
+
+type LoaderData = {
+  posts: Array<Post>;
+};
+
 export const loader = async () => {
-  return json({
+  return json<LoaderData>({
     posts: [
       {
         slug: "my-first-post",
@@ -17,7 +26,7 @@ export const loader = async () => {
 };
 
 export default function Posts() {
-  const { posts } = useLoaderData();
+  const { posts } = useLoaderData<LoaderData>();
   return (
     <main>
       <h1>Posts</h1>
