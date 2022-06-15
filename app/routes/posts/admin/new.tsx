@@ -23,21 +23,13 @@ export default function NewPost() {
       <p>
         <label>
           Post Title:{" "}
-          <input
-            type="text"
-            name="title"
-            className={inputClassName}
-          />
+          <input type="text" name="title" className={inputClassName} />
         </label>
       </p>
       <p>
         <label>
           Post Slug:{" "}
-          <input
-            type="text"
-            name="slug"
-            className={inputClassName}
-          />
+          <input type="text" name="slug" className={inputClassName} />
         </label>
       </p>
       <p>
