@@ -6,6 +6,7 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
+import { useEffect, useRef } from "react";
 import invariant from "tiny-invariant";
 
 import type { Post } from "~/models/post.server";
@@ -65,6 +66,16 @@ export default function EditPostSlug() {
   const transition = useTransition();
   const isUpdating = Boolean(transition.submission);
 
+  const titleRef = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const slugRef = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const markdownRef = useRef() as React.MutableRefObject<HTMLTextAreaElement>;
+
+  useEffect(() => {
+    titleRef.current.value = post.title;
+    slugRef.current.value = post.slug;
+    markdownRef.current.value = post.markdown;
+  }, [post.slug]);
+
   return (
     <Form method="post">
       <p>
@@ -77,8 +88,7 @@ export default function EditPostSlug() {
             type="text"
             name="title"
             className={inputClassName}
-            // TODO: Find out better way to sync data with form UI
-            defaultValue={post.title}
+            ref={titleRef}
           />
         </label>
       </p>
@@ -93,7 +103,7 @@ export default function EditPostSlug() {
             type="text"
             name="slug"
             className={inputClassName}
-            defaultValue={post.slug}
+            ref={slugRef}
           />
         </label>
       </p>
@@ -110,7 +120,7 @@ export default function EditPostSlug() {
           rows={20}
           name="markdown"
           className={`${inputClassName} font-mono`}
-          defaultValue={post.markdown}
+          ref={markdownRef}
         />
       </p>
       <p className="text-right">
