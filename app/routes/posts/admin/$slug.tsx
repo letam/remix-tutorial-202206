@@ -38,6 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json<ActionData>(errors);
   }
 
+  invariant(typeof initialSlug === "string", "initial slug must be a string");
   invariant(typeof title === "string", "title must be a string");
   invariant(typeof slug === "string", "slug must be a string");
   invariant(typeof markdown === "string", "markdown must be a string");
