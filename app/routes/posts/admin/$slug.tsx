@@ -23,6 +23,7 @@ type ActionData =
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
 
+  const initialSlug = formData.get("initialSlug");
   const title = formData.get("title");
   const slug = formData.get("slug");
   const markdown = formData.get("markdown");
@@ -41,7 +42,7 @@ export const action: ActionFunction = async ({ request }) => {
   invariant(typeof slug === "string", "slug must be a string");
   invariant(typeof markdown === "string", "markdown must be a string");
 
-  await updatePost(slug, { title, slug, markdown });
+  await updatePost(initialSlug, { title, slug, markdown });
 
   return redirect("/posts/admin");
 };
@@ -78,6 +79,7 @@ export default function EditPostSlug() {
 
   return (
     <Form method="post">
+      <input type="hidden" name="initialSlug" value={post.slug} />
       <p>
         <label>
           Post Title:{" "}
@@ -92,7 +94,6 @@ export default function EditPostSlug() {
           />
         </label>
       </p>
-      {/* TODO: Find out how to update slug */}
       <p>
         <label>
           Post Slug:{" "}
