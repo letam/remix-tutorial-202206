@@ -101,6 +101,7 @@ export default function EditPostSlug() {
             name="title"
             className={inputClassName}
             ref={titleRef}
+            defaultValue={post.title}
           />
         </label>
       </p>
@@ -115,6 +116,7 @@ export default function EditPostSlug() {
             name="slug"
             className={inputClassName}
             ref={slugRef}
+            defaultValue={post.slug}
           />
         </label>
       </p>
@@ -132,6 +134,7 @@ export default function EditPostSlug() {
           name="markdown"
           className={`${inputClassName} font-mono`}
           ref={markdownRef}
+          defaultValue={post.markdown}
         />
       </p>
       <p className="flex flex-row-reverse text-right">
