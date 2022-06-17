@@ -7,7 +7,7 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 
 import type { Post } from "~/models/post.server";
@@ -74,8 +74,18 @@ export default function EditPostSlug() {
   const errors = useActionData();
   const { post } = useLoaderData<LoaderData>();
 
+  const [activeButton, setActiveButton] = useState<string>();
+
   const transition = useTransition();
-  const isUpdating = Boolean(transition.submission);
+  const isSubmitting = Boolean(transition.submission);
+  const isUpdating = isSubmitting && activeButton === "update";
+  const isDeleting = isSubmitting && activeButton === "delete";
+
+  useEffect(() => {
+    if (!transition.submission) {
+      setActiveButton(null);
+    }
+  }, [transition]);
 
   const titleRef = useRef() as React.MutableRefObject<HTMLInputElement>;
   const slugRef = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -141,7 +151,8 @@ export default function EditPostSlug() {
         <button
           type="submit"
           className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
-          disabled={isUpdating}
+          onClick={() => setActiveButton("update")}
+          disabled={isSubmitting}
         >
           {isUpdating ? "Updating..." : "Update Post"}
         </button>
@@ -151,8 +162,10 @@ export default function EditPostSlug() {
           name="_action"
           value="delete"
           className="mx-4 rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400 disabled:bg-red-300"
+          onClick={() => setActiveButton("delete")}
+          disabled={isSubmitting}
         >
-          Delete Post
+          {isDeleting ? "Deleting..." : "Delete Post"}
         </button>
       </p>
     </Form>
