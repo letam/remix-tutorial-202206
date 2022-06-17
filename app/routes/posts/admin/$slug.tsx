@@ -3,6 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import {
   Form,
   useActionData,
+  useFormAction,
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
@@ -11,7 +12,7 @@ import invariant from "tiny-invariant";
 
 import type { Post } from "~/models/post.server";
 
-import { getPost, updatePost } from "~/models/post.server";
+import { getPost, updatePost, deletePost } from "~/models/post.server";
 
 type ActionData =
   | {
@@ -22,6 +23,14 @@ type ActionData =
   | undefined;
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
+  const { _action, ...values } = Object.fromEntries(formData);
+
+  if (_action === "delete") {
+    const slug = formData.get("slug");
+    await deletePost(slug);
+
+    return redirect("/posts/admin");
+  }
 
   const initialSlug = formData.get("initialSlug");
   const title = formData.get("title");
@@ -125,13 +134,22 @@ export default function EditPostSlug() {
           ref={markdownRef}
         />
       </p>
-      <p className="text-right">
+      <p className="flex flex-row-reverse text-right">
         <button
           type="submit"
           className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
           disabled={isUpdating}
         >
           {isUpdating ? "Updating..." : "Update Post"}
+        </button>
+        <button
+          type="submit"
+          aria-label="delete"
+          name="_action"
+          value="delete"
+          className="mx-4 rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400 disabled:bg-red-300"
+        >
+          Delete Post
         </button>
       </p>
     </Form>
