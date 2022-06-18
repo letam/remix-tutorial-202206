@@ -27,7 +27,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (_action === "delete") {
     const slug = formData.get("slug");
-    await deletePost(slug);
+    await deletePost(slug as string);
 
     return redirect("/posts/admin");
   }
@@ -83,7 +83,7 @@ export default function EditPostSlug() {
 
   useEffect(() => {
     if (!transition.submission) {
-      setActiveButton(null);
+      setActiveButton("");
     }
   }, [transition]);
 
