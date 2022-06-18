@@ -11,6 +11,7 @@ type ActionData =
       slug: null | string;
       markdown: null | string;
     }
+  | string
   | undefined;
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -33,9 +34,15 @@ export const action: ActionFunction = async ({ request }) => {
   invariant(typeof slug === "string", "slug must be a string");
   invariant(typeof markdown === "string", "markdown must be a string");
 
-  await createPost({ title, slug, markdown });
-
-  return redirect("/posts/admin");
+  try {
+    await createPost({ title, slug, markdown });
+    return redirect("/posts/admin");
+  } catch (e) {
+    console.error(e);
+    return json("Sorry, we couldn't create the post.", {
+      status: 500,
+    });
+  }
 };
 
 const inputClassName = `w-full rounded border border-gray-500 px-2 py-1 text-lg`;
@@ -82,6 +89,9 @@ export default function NewPost() {
         />
       </p>
       <p className="text-right">
+        {typeof errors === "string" ? (
+          <em className="mx-4 text-red-600">{errors}</em>
+        ) : null}
         <button
           type="submit"
           className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
