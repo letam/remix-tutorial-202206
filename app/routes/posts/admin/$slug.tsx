@@ -14,6 +14,8 @@ import type { Post } from "~/models/post.server";
 
 import { getPost, updatePost, deletePost } from "~/models/post.server";
 
+import DangerModal from "~/components/modals/DangerModal";
+
 type ActionData =
   | {
       title: null | string;
@@ -80,6 +82,8 @@ export default function EditPostSlug() {
   const isSubmitting = Boolean(transition.submission);
   const isUpdating = isSubmitting && activeButton === "update";
   const isDeleting = isSubmitting && activeButton === "delete";
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (!transition.submission) {
@@ -159,15 +163,63 @@ export default function EditPostSlug() {
         <button
           type="submit"
           aria-label="delete"
+          id="delete-post"
           name="_action"
           value="delete"
           className="mx-4 rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400 disabled:bg-red-300"
-          onClick={() => setActiveButton("delete")}
+          onClick={(event) => {
+            if (showDeleteModal) {
+              setActiveButton("delete");
+              return;
+            }
+            event.preventDefault();
+            setShowDeleteModal(true);
+          }}
           disabled={isSubmitting}
         >
           {isDeleting ? "Deleting..." : "Delete Post"}
         </button>
       </p>
+      {showDeleteModal && (
+        <DeleteModal
+          confirmButtonLabel={isDeleting ? "Deleting..." : "Delete Post"}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={() => {
+            const deletePostButton = document.querySelector(
+              "#delete-post"
+            )! as HTMLElement;
+            deletePostButton.click();
+          }}
+          title={"Delete Post"}
+        >
+          Are you sure you want to delete this post?
+        </DeleteModal>
+      )}
     </Form>
+  );
+}
+
+function DeleteModal({
+  children,
+  confirmButtonLabel,
+  onClose,
+  onConfirm,
+  title,
+}: {
+  children: string;
+  confirmButtonLabel: string;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+}) {
+  return (
+    <DangerModal
+      confirmButtonLabel={confirmButtonLabel}
+      onClose={onClose}
+      onConfirm={onConfirm}
+      title={title}
+    >
+      {children}
+    </DangerModal>
   );
 }
