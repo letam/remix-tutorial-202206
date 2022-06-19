@@ -4,7 +4,6 @@ import { Form, useActionData, useTransition } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import { createPost } from "~/models/post.server";
-import { requireUserId } from "~/session.server";
 
 type ActionData =
   | {
@@ -15,8 +14,6 @@ type ActionData =
   | string
   | undefined;
 export const action: ActionFunction = async ({ request }) => {
-  const userId = await requireUserId(request);
-
   const formData = await request.formData();
   const title = formData.get("title");
   const slug = formData.get("slug");
