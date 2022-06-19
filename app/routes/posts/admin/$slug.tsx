@@ -13,6 +13,7 @@ import invariant from "tiny-invariant";
 import type { Post } from "~/models/post.server";
 
 import { getPost, updatePost, deletePost } from "~/models/post.server";
+import { requireUserId } from "~/session.server"
 
 import DangerModal from "~/components/modals/DangerModal";
 
@@ -24,6 +25,8 @@ type ActionData =
     }
   | undefined;
 export const action: ActionFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+
   const formData = await request.formData();
   const { _action, ...values } = Object.fromEntries(formData);
 
